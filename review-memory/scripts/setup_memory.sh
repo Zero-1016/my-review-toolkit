@@ -20,6 +20,22 @@ mkdir -p "$MEM/reviews"
 리뷰 스킬이 시작할 때 읽고, 끝날 때 새로 발견한 패턴을 추가한다.
 EOF
 
+[ -f "$MEM/context.md" ] || cat > "$MEM/context.md" <<'EOF'
+# 리뷰 컨텍스트 (사용자 제공)
+
+리뷰 전에 미리 알아두어야 할 배경을 사용자가 직접 등록하는 파일.
+리뷰 스킬이 시작할 때 conventions.md와 함께 읽는다.
+
+## 프로젝트 배경
+(도메인, 아키텍처, 기술적 제약 등 — 비어 있으면 무시)
+
+## 리뷰 시 중점 사항
+(예: 성능에 민감한 모듈, 이번 마일스톤의 우선순위)
+
+## 팀 규칙
+(코드 컨벤션 문서 링크, 리뷰 톤, 머지 기준 등)
+EOF
+
 EXCLUDE_FILE="$ROOT/.git/info/exclude"
 if [ -d "$ROOT/.git" ]; then
   mkdir -p "$ROOT/.git/info"
