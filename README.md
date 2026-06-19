@@ -52,12 +52,6 @@ done
 스킬 본문이 공용 스크립트를 `~/.claude/skills/review-memory/scripts/` 경로로
 참조하므로, `review-memory` 심링크는 필수다.
 
-## 환경 주의 (rtk 훅)
-
-이 머신에서는 rtk 훅이 셸 명령을 재작성하므로, 스킬 내 모든 셸 명령에
-`RTK_SKIP=1` 접두어를 붙여 우회한다. 그래도 `_safe_eval` 오류가 나면
-절대경로(`/usr/bin/git` 등)로 재시도한다. 자세한 내용은 각 SKILL.md의 환경 주의 참고.
-
 ## 기타
 
 - [`review-skills-workspace/`](review-skills-workspace/) — 스킬 개발 시 사용한 평가(eval) 픽스처와 결과물. 스킬 동작과는 무관하다.

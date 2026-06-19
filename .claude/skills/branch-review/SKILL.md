@@ -13,30 +13,27 @@ pr-review/local-code-review와 같은 프로젝트 메모리를 공유한다.
 ## 1단계: 메모리 준비 및 로드
 
 ```bash
-RTK_SKIP=1 bash ~/.claude/skills/review-memory/scripts/setup_memory.sh <프로젝트경로>
+bash ~/.claude/skills/review-memory/scripts/setup_memory.sh <프로젝트경로>
 ```
 
 그 다음 반드시 읽는다:
 - `.review-memory/conventions.md` — 반복 패턴/컨벤션
 - `.review-memory/reviews/` 의 최근 2~3개 — 최근 리뷰 맥락
 
-> 환경 주의: 이 머신에서는 rtk 훅이 셸 명령을 재작성한다. 이 스킬의 모든 셸 명령
-> (git/스크립트)에는 `RTK_SKIP=1` 접두어를 붙여 재작성을 우회한다 — 훅 래퍼가
-> 이 마커를 인식해 원본 명령을 그대로 실행한다. 그래도 `_safe_eval` 오류가 나면
-> `/usr/bin/git` 절대경로로 재시도하고, 파일 읽기/쓰기는 Read/Write 도구를 사용한다.
+> 파일 읽기/쓰기는 셸(`cat`/`echo`) 대신 Read/Write 도구를 사용한다.
 
 ## 2단계: base 브랜치 결정 및 diff 수집
 
 ```bash
 # base 브랜치: 사용자가 지정하면 그것, 아니면 origin/HEAD → main → master 순으로 탐지
-RTK_SKIP=1 git symbolic-ref refs/remotes/origin/HEAD --short 2>/dev/null \
-  || RTK_SKIP=1 git branch -l main master
+git symbolic-ref refs/remotes/origin/HEAD --short 2>/dev/null \
+  || git branch -l main master
 
 # 분기점(merge-base) 기준으로 브랜치의 모든 변경 (커밋 + 미커밋 포함)
-RTK_SKIP=1 git merge-base <base> HEAD          # 분기점 SHA
-RTK_SKIP=1 git diff --stat <분기점SHA>          # 변경 규모 파악
-RTK_SKIP=1 git diff <분기점SHA>                 # 전체 diff (작업 트리 기준)
-RTK_SKIP=1 git log --oneline <base>..HEAD      # 브랜치 커밋 목록
+git merge-base <base> HEAD          # 분기점 SHA
+git diff --stat <분기점SHA>          # 변경 규모 파악
+git diff <분기점SHA>                 # 전체 diff (작업 트리 기준)
+git log --oneline <base>..HEAD      # 브랜치 커밋 목록
 ```
 
 - merge-base를 쓰는 이유: base가 앞서 나갔어도 **내가 바꾼 것만** 보기 위해서다. `git diff <base>`를 직접 쓰면 base의 새 커밋이 역방향 변경으로 섞인다.
