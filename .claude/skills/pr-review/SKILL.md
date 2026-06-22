@@ -47,10 +47,29 @@ gh pr diff <번호|URL>
 gh pr view <번호|URL> --json comments,reviews \
   --jq '{comments: [.comments[] | {author: .author.login, body: .body[0:1500]}], reviews: [.reviews[] | {author: .author.login, state, body: .body[0:1500]}]}'
 
-# 코드 라인에 달린 인라인 리뷰 코멘트 (in_reply_to_id가 같은 것끼리 한 스레드)
-gh api repos/<owner>/<repo>/pulls/<번호>/comments --paginate \
-  --jq '[.[] | {id, author: .user.login, path, line, in_reply_to_id, body: .body[0:1500]}]'
+# 인라인 리뷰 스레드 — resolved(해결됨) 여부까지 포함한다.
+# REST(pulls/comments)에는 isResolved가 없으므로 GraphQL로 스레드 단위로 가져온다.
+# isResolved=true / isOutdated=true 스레드는 이미 닫혔거나 라인이 사라진 것이다.
+gh api graphql -f owner=<owner> -f repo=<repo> -F pr=<번호> -f query='
+query($owner:String!,$repo:String!,$pr:Int!){
+  repository(owner:$owner,name:$repo){
+    pullRequest(number:$pr){
+      reviewThreads(first:100){
+        nodes{
+          isResolved isOutdated
+          comments(first:20){ nodes{ databaseId path line author{login} body } }
+        }
+      }
+    }
+  }
+}' --jq '[.data.repository.pullRequest.reviewThreads.nodes[] | {
+  isResolved, isOutdated,
+  path: .comments.nodes[0].path, line: .comments.nodes[0].line,
+  comments: [.comments.nodes[] | {id: .databaseId, author: .author.login, body: .body[0:1500]}]
+}]'
 ```
+
+> 스레드가 100개를 넘으면 `reviewThreads(first:100)`에 `pageInfo{ hasNextPage endCursor }`를 추가해 `after:` 커서로 페이지를 이어 받는다.
 
 봇 코멘트(`vercel`, `coderabbitai[bot]`, `github-actions` 등)는 사람 코멘트와 구분한다 —
 봇 지적 중 타당한 것은 참고하되, 사람 리뷰어의 코멘트가 리뷰 맥락의 중심이다.
@@ -73,9 +92,16 @@ gh api repos/<owner>/<repo>/pulls/<번호>/comments --paginate \
 
 - 다른 리뷰어가 이미 지적한 것과 같은 발견은 새 발견처럼 쓰지 않는다. 동의하면 해당
   스레드에 근거를 보강하는 **답글**을 제안하고, 다르게 보면 반박 근거와 함께 답글로 분류한다.
+- **`isResolved: true`인 스레드는 이미 닫힌 것이므로 재지적하지 않는다** — 답글이나 코드 수정이
+  없어도 마찬가지다. resolve된 지적을 다시 새 발견처럼 쓰면 신뢰를 잃는다. 다만 resolve됐지만
+  실제 코드에 문제가 그대로 남아 있다고 확신하면, 새 발견이 아니라 **해당 스레드에 "여전히 남아
+  있는 것 같다"는 답글**로 분류하고 근거를 단다.
+- `isOutdated: true`(코멘트가 달린 라인이 이후 변경으로 사라짐)는 후속 커밋에서 손댄 신호다 —
+  최신 diff를 확인하고, 문제가 해소됐으면 재지적하지 않는다.
 - 기존 코멘트에 작성자가 이미 답했거나 후속 커밋으로 수정했으면 재지적하지 않는다
   (코멘트의 라인이 최신 diff에서 어떻게 바뀌었는지 확인).
-- 아직 답이 없는 기존 지적 중 이번 변경에 실제로 중요해 보이는 것이 있으면 결과에서 짚어준다.
+- **아직 열려 있는(`isResolved: false`) 기존 지적** 중 이번 변경에 실제로 중요해 보이는 것이
+  있으면 결과에서 짚어준다.
 
 ## 4단계: 결과 출력
 
