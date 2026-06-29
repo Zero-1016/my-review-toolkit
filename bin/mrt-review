@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# 리뷰 메모리 공용 런처. 에이전트/설치위치와 무관하게 스킬 본문이 호출하는 단일 진입점.
+#   mrt-review setup <프로젝트경로>   → 메모리 폴더 보장 + 첫리뷰 신호 + 경로 출력
+#   mrt-review <명령> [...]           → manager.sh 로 위임 (list/show/path/export/import/rm)
+# 자기 자신의 심링크를 해석해 저장소 내 scripts/ 를 찾는다(readlink -f 의존 X — macOS 호환).
+set -euo pipefail
+
+src="$0"
+while [ -h "$src" ]; do
+  dir="$(cd "$(dirname "$src")" && pwd -P)"
+  src="$(readlink "$src")"
+  case "$src" in /*) ;; *) src="$dir/$src";; esac
+done
+SELF="$(cd "$(dirname "$src")" && pwd -P)"            # <mrt>/bin
+SCRIPTS="$SELF/../skills/review-memory/scripts"
+
+case "${1:-}" in
+  setup) shift; exec bash "$SCRIPTS/setup_memory.sh" "$@";;
+  "")    exec bash "$SCRIPTS/manager.sh";;
+  *)     exec bash "$SCRIPTS/manager.sh" "$@";;
+esac

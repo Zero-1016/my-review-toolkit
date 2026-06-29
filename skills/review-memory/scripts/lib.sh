@@ -7,13 +7,19 @@
 #   <mrt>/.review-memory/<project-slug>/{context.md, conventions.md, reviews/, .origin}
 # 대상 프로젝트에는 아무 파일도 만들지 않는다.
 
-# mrt 저장소 루트. 이 스크립트의 물리 경로(심링크 해석)에서 역추적한다.
-# 스킬은 ~/.claude/skills/review-memory -> <mrt>/.claude/skills/review-memory 로 심링크 등록되므로,
-# scripts/ 기준 4단계 상위가 mrt 루트다.
+# mrt 저장소 루트. 설치 위치/심링크 구조와 무관하게 찾는다(에이전트 공용).
+#  1) $MRT_HOME 가 있으면 최우선(명시적 override).
+#  2) 없으면 이 스크립트의 물리 경로(심링크 해석)에서 위로 올라가며
+#     skills/review-memory 를 품은 디렉토리(= mrt 루트)를 탐색한다.
 rm_mrt_root() {
-  local script_dir
-  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"  # .../review-memory/scripts (물리경로)
-  (cd "$script_dir/../../../.." && pwd -P)
+  if [ -n "${MRT_HOME:-}" ]; then echo "$MRT_HOME"; return; fi
+  local d
+  d="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"  # .../skills/review-memory/scripts (물리경로)
+  while [ "$d" != "/" ]; do
+    [ -d "$d/skills/review-memory" ] && { echo "$d"; return; }
+    d="$(dirname "$d")"
+  done
+  return 1
 }
 
 # 중앙 메모리 루트.

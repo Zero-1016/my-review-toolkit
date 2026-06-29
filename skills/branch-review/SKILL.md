@@ -13,7 +13,7 @@ pr-review/local-code-review와 같은 프로젝트 메모리를 공유한다.
 ## 1단계: 메모리 준비 및 로드
 
 ```bash
-bash ~/.claude/skills/review-memory/scripts/setup_memory.sh <프로젝트경로>
+mrt-review setup <프로젝트경로>
 ```
 
 리뷰 메모리는 대상 프로젝트가 아니라 **mrt 저장소 안**(`<mrt>/.review-memory/<프로젝트명>/`)에 모인다.
@@ -23,7 +23,7 @@ bash ~/.claude/skills/review-memory/scripts/setup_memory.sh <프로젝트경로>
 - `<MEM>/conventions.md` — 반복 패턴/컨벤션
 - `<MEM>/reviews/` 의 최근 2~3개 — 최근 리뷰 맥락
 
-> 파일 읽기/쓰기는 셸(`cat`/`echo`) 대신 Read/Write 도구를 사용한다.
+> 파일 읽기/쓰기는 셸(`cat`/`echo`) 대신 에이전트의 파일 읽기/쓰기 도구를 쓴다.
 
 ## 2단계: base 브랜치 결정 및 diff 수집
 

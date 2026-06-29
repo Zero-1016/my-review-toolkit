@@ -31,7 +31,7 @@ description: 프로젝트별 리뷰 메모리(중앙 저장소)를 관리한다 
 여러 프로젝트 메모리를 한 도구에서 다룬다. 인자는 **프로젝트 경로** 또는 **slug** 둘 다 받는다.
 
 ```bash
-bash ~/.claude/skills/review-memory/scripts/manager.sh <명령>
+mrt-review <명령>
 ```
 
 | 명령 | 설명 |
@@ -45,16 +45,17 @@ bash ~/.claude/skills/review-memory/scripts/manager.sh <명령>
 | `rm <slug> --yes` | 해당 프로젝트 메모리 삭제 (확인 인자 필수) |
 
 조회성 요청("리뷰 기록 보여줘", "어떤 프로젝트들이 있지?", "자주 나온 이슈가 뭐였지?")은
-`manager.sh list` / `show <slug>` 결과를 읽고 요약해 답한다.
+`mrt-review list` / `mrt-review show <slug>` 결과를 읽고 요약해 답한다.
 
 ## 작업별 방법
 
-모든 스크립트는 이 스킬의 `scripts/` 폴더에 있다 (`lib.sh`가 공통 경로 코어).
+모든 스크립트는 이 스킬의 `scripts/` 폴더에 있고, 본문은 PATH 런처 `mrt-review`로 호출한다
+(런처는 `bin/mrt-review`, 공통 경로 코어는 `scripts/lib.sh`).
 
 ### 초기화 / 폴더 보장
 
 ```bash
-bash ~/.claude/skills/review-memory/scripts/setup_memory.sh <프로젝트경로>
+mrt-review setup <프로젝트경로>
 ```
 
 중앙 폴더 생성 + 템플릿(context.md/conventions.md) + `.origin` 기록까지 한 번에 처리한다. 이미 있으면 그대로 둔다.
@@ -66,8 +67,8 @@ bash ~/.claude/skills/review-memory/scripts/setup_memory.sh <프로젝트경로>
 처럼 앞으로의 리뷰에 반영할 정보를 주면:
 
 1. 위 초기화 스크립트로 폴더를 보장한다 (context.md 템플릿이 함께 생성된다).
-2. 출력된 메모리 경로의 `context.md`를 Read로 읽고, 사용자가 준 내용을 알맞은 섹션(프로젝트 배경 /
-   리뷰 시 중점 사항 / 팀 규칙)에 Edit로 추가·갱신한다. 템플릿의 괄호 안내문은 실제 내용으로 교체한다.
+2. 출력된 메모리 경로의 `context.md`를 파일 읽기 도구로 읽고, 사용자가 준 내용을 알맞은 섹션(프로젝트 배경 /
+   리뷰 시 중점 사항 / 팀 규칙)에 수정 도구로 추가·갱신한다. 템플릿의 괄호 안내문은 실제 내용으로 교체한다.
 3. 저장 후 현재 context.md 전체를 사용자에게 보여주고 맞는지 확인한다.
 
 "이번 리뷰에서만" 고려할 일회성 정보는 context.md에 쓰지 않는다 — 그 리뷰에서만 반영하고 버린다.
@@ -76,8 +77,8 @@ bash ~/.claude/skills/review-memory/scripts/setup_memory.sh <프로젝트경로>
 ### 내보내기 / 가져오기
 
 ```bash
-bash ~/.claude/skills/review-memory/scripts/manager.sh export <프로젝트|slug> [출력디렉토리]
-bash ~/.claude/skills/review-memory/scripts/manager.sh import <아카이브.tar.gz> <프로젝트|slug>
+mrt-review export <프로젝트|slug> [출력디렉토리]
+mrt-review import <아카이브.tar.gz> <프로젝트|slug>
 ```
 
 export는 `<slug>-review-memory-<날짜>.tar.gz` 하나로 묶는다(백업·머신 이전·동료 공유).

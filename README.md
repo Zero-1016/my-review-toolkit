@@ -1,19 +1,20 @@
 # 코드 리뷰 스킬 모음
 
-Claude Code에서 쓰는 개인 코드 리뷰 스킬 저장소. 모든 리뷰 스킬이 프로젝트별
+여러 에이전트(Claude Code · Codex · Gemini CLI · Copilot CLI)에서 공용으로 쓰는 코드 리뷰
+스킬 저장소. 모든 리뷰 스킬이 프로젝트별
 **리뷰 메모리**를 공유해서, 리뷰를 거듭할수록 그 프로젝트에 특화된 리뷰어가 되는 것이 핵심이다.
 메모리는 대상 프로젝트가 아니라 **이 저장소 한 곳**(`mrt/.review-memory/<project>/`)에 모인다.
 
 ## 스킬 목록
 
-스킬은 전부 [`.claude/skills/`](.claude/skills/) 아래에 있다.
+스킬은 전부 [`skills/`](skills/) 아래에 있다.
 
 | 스킬 | 대상 | 언제 쓰나 |
 |------|------|-----------|
-| [`local-code-review`](.claude/skills/local-code-review/SKILL.md) | 미커밋 변경 (working diff) | 커밋/푸시 전에 "내 변경사항 봐줘", "커밋 전에 리뷰해줘" |
-| [`branch-review`](.claude/skills/branch-review/SKILL.md) | 브랜치 전체 (base 브랜치의 merge-base 기준, 커밋 + 미커밋) | "main 대비 뭐가 바뀌었는지 리뷰해줘", "브랜치 전체 심각도별로 봐줘" |
-| [`pr-review`](.claude/skills/pr-review/SKILL.md) | GitHub PR | PR 번호/URL로 "이 PR 리뷰해줘" — 복사해서 달 수 있는 추천 코멘트까지 생성 |
-| [`review-memory`](.claude/skills/review-memory/SKILL.md) | 리뷰 메모리 관리 | 메모리 내보내기/가져오기/조회, 리뷰 컨텍스트 사전 등록. 공용 스크립트도 여기에 |
+| [`local-code-review`](skills/local-code-review/SKILL.md) | 미커밋 변경 (working diff) | 커밋/푸시 전에 "내 변경사항 봐줘", "커밋 전에 리뷰해줘" |
+| [`branch-review`](skills/branch-review/SKILL.md) | 브랜치 전체 (base 브랜치의 merge-base 기준, 커밋 + 미커밋) | "main 대비 뭐가 바뀌었는지 리뷰해줘", "브랜치 전체 심각도별로 봐줘" |
+| [`pr-review`](skills/pr-review/SKILL.md) | GitHub PR | PR 번호/URL로 "이 PR 리뷰해줘" — 복사해서 달 수 있는 추천 코멘트까지 생성 |
+| [`review-memory`](skills/review-memory/SKILL.md) | 리뷰 메모리 관리 | 메모리 내보내기/가져오기/조회, 리뷰 컨텍스트 사전 등록. 공용 스크립트도 여기에 |
 
 ### 출력 형식
 
@@ -72,8 +73,8 @@ mrt/.review-memory/              # .gitignore로 무시됨 → 커밋 안 됨
 └── <다른 프로젝트>/ …
 ```
 
-- 경로 규칙은 [`scripts/lib.sh`](.claude/skills/review-memory/scripts/lib.sh) 한 곳(SSOT)에 있다.
-- 여러 프로젝트 메모리는 [`manager.sh`](.claude/skills/review-memory/scripts/manager.sh)로 한 번에 다룬다: `list` · `show` · `path` · `export` · `import` · `rm`.
+- 경로 규칙은 [`scripts/lib.sh`](skills/review-memory/scripts/lib.sh) 한 곳(SSOT)에 있다.
+- 여러 프로젝트 메모리는 PATH 런처 `mrt-review`(→ [`manager.sh`](skills/review-memory/scripts/manager.sh))로 한 번에 다룬다: `list` · `show` · `path` · `export` · `import` · `rm`.
 
 모든 리뷰는 시작할 때 `conventions.md` + `context.md` + 최근 리뷰 2~3개를 읽고,
 끝나면 결과를 저장한다. PR 리뷰에서 발견된 패턴이 로컬/브랜치 리뷰에도 반영되고,
@@ -81,16 +82,24 @@ mrt/.review-memory/              # .gitignore로 무시됨 → 커밋 안 됨
 
 ## 설치
 
-스킬 디렉토리를 `~/.claude/skills/`에 심링크하면 모든 프로젝트에서 쓸 수 있다:
+여러 에이전트에 한 번에 설치한다 (정본 1개 + 링크 N개):
 
 ```bash
-for s in branch-review local-code-review pr-review review-memory; do
-  ln -sfn "$(pwd)/.claude/skills/$s" ~/.claude/skills/$s
-done
+bash install.sh
 ```
 
-스킬 본문이 공용 스크립트를 `~/.claude/skills/review-memory/scripts/` 경로로
-참조하므로, `review-memory` 심링크는 필수다.
+설치되는 것:
+
+- `~/.claude/skills/<name>` — Claude Code
+- `~/.agents/skills/<name>` — Codex · Gemini CLI · Copilot CLI 공통 발견 경로
+- `~/.local/bin/mrt-review` — 스킬 본문이 호출하는 PATH 런처 (메모리 스크립트 단일 진입점)
+
+`install.sh`는 멱등이라 재실행해도 안전하다. 스킬 본문은 절대경로 대신 `mrt-review`만
+호출하고, 스크립트는 설치 위치와 무관하게 동작한다(`scripts/lib.sh`가 mrt 루트를 자동 탐색,
+`$MRT_HOME`로 override 가능). 지시파일은 `AGENTS.md`가 정본이며 `CLAUDE.md`·`GEMINI.md`는
+그 심링크다.
+
+> `~/.local/bin`이 PATH에 없으면 `export PATH="$HOME/.local/bin:$PATH"`를 shell rc에 추가한다.
 
 ## 기타
 
