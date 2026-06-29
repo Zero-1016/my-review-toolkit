@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""export_memory.py 로 만든 아카이브를 다른 프로젝트(또는 새 머신)에 병합한다.
+"""export_memory.py 로 만든 아카이브를 중앙 저장소의 한 프로젝트로 병합한다.
+
+메모리는 mrt 저장소 안 <mrt>/.review-memory/<project-slug>/ 에 모인다.
 
 사용법:
-    python3 import_memory.py <아카이브.tar.gz> <대상 프로젝트 경로>
+    python3 import_memory.py <아카이브.tar.gz> <대상 프로젝트 경로 | slug>
 
 병합 규칙:
 - reviews/ 안의 파일: 같은 이름이 이미 있으면 건너뜀 (기존 기록 보호)
@@ -16,6 +18,30 @@ import tarfile
 import tempfile
 from pathlib import Path
 
+SCRIPTS = Path(__file__).parent
+LIB = SCRIPTS / "lib.sh"
+
+
+def _lib(func: str, *args: str) -> str:
+    cmd = ["bash", "-c", f'source "{LIB}"; {func} "$@"', "_", *args]
+    return subprocess.check_output(cmd, text=True).strip()
+
+
+def resolve_dest(arg: str) -> Path:
+    """대상(slug 또는 프로젝트 경로)의 중앙 메모리 폴더를 보장 생성하고 돌려준다."""
+    mem_root = Path(_lib("rm_root"))
+    if Path(arg).is_dir():
+        # 실제 프로젝트 경로 → setup_memory.sh 로 폴더/템플릿/.origin 보장
+        subprocess.run(
+            ["bash", str(SCRIPTS / "setup_memory.sh"), arg],
+            check=True, capture_output=True,
+        )
+        return Path(_lib("rm_memory_dir", arg))
+    # slug 직접 지정 (대응하는 실제 프로젝트가 이 머신에 없을 수 있음)
+    dest = mem_root / arg
+    (dest / "reviews").mkdir(parents=True, exist_ok=True)
+    return dest
+
 
 def main():
     if len(sys.argv) < 3:
@@ -23,21 +49,7 @@ def main():
         sys.exit(1)
 
     archive = Path(sys.argv[1]).resolve()
-    project = Path(sys.argv[2]).resolve()
-
-    try:
-        root = Path(
-            subprocess.check_output(
-                ["git", "rev-parse", "--show-toplevel"], cwd=project, text=True
-            ).strip()
-        )
-    except subprocess.CalledProcessError:
-        root = project
-
-    # 대상 메모리 폴더 준비 (setup_memory.sh와 동일한 보장: git exclude 등록 포함)
-    setup = Path(__file__).parent / "setup_memory.sh"
-    subprocess.run(["bash", str(setup), str(root)], check=True, capture_output=True)
-    dest = root / ".review-memory"
+    dest = resolve_dest(sys.argv[2])
 
     with tempfile.TemporaryDirectory() as tmp:
         with tarfile.open(archive) as tar:
