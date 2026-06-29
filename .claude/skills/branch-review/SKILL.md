@@ -16,9 +16,12 @@ pr-review/local-code-review와 같은 프로젝트 메모리를 공유한다.
 bash ~/.claude/skills/review-memory/scripts/setup_memory.sh <프로젝트경로>
 ```
 
+리뷰 메모리는 대상 프로젝트가 아니라 **mrt 저장소 안**(`<mrt>/.review-memory/<프로젝트명>/`)에 모인다.
+스크립트 출력의 **마지막 줄이 이 프로젝트의 메모리 폴더 절대경로**(`<MEM>`)다 — 아래 파일들은 그 경로 기준으로 읽는다.
+
 그 다음 반드시 읽는다:
-- `.review-memory/conventions.md` — 반복 패턴/컨벤션
-- `.review-memory/reviews/` 의 최근 2~3개 — 최근 리뷰 맥락
+- `<MEM>/conventions.md` — 반복 패턴/컨벤션
+- `<MEM>/reviews/` 의 최근 2~3개 — 최근 리뷰 맥락
 
 > 파일 읽기/쓰기는 셸(`cat`/`echo`) 대신 Read/Write 도구를 사용한다.
 
@@ -108,7 +111,7 @@ High가 양치기 늑대가 되면 분류 자체가 무의미해진다:
 
 ## 5단계: 메모리 저장
 
-1. `.review-memory/reviews/<오늘날짜>-branch-<브랜치명>.md` 에 리뷰 결과 저장 (날짜/브랜치/base/심각도별 건수를 헤더로)
+1. `<MEM>/reviews/<오늘날짜>-branch-<브랜치명>.md` 에 리뷰 결과 저장 (날짜/브랜치/base/심각도별 건수를 헤더로)
 2. **conventions.md 업데이트 판단** — pr-review와 같은 기준:
    - 반복해서 나오는 이슈 → 기존 항목에 횟수/날짜 추가
    - 프로젝트 고유의 새 패턴 → 새 항목 추가
