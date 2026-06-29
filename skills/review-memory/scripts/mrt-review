@@ -11,8 +11,7 @@ while [ -h "$src" ]; do
   src="$(readlink "$src")"
   case "$src" in /*) ;; *) src="$dir/$src";; esac
 done
-SELF="$(cd "$(dirname "$src")" && pwd -P)"            # <mrt>/bin
-SCRIPTS="$SELF/../skills/review-memory/scripts"
+SCRIPTS="$(cd "$(dirname "$src")" && pwd -P)"         # 자기 자신이 review-memory/scripts/ 안에 있다
 
 case "${1:-}" in
   setup) shift; exec bash "$SCRIPTS/setup_memory.sh" "$@";;

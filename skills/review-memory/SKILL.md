@@ -50,7 +50,7 @@ mrt-review <명령>
 ## 작업별 방법
 
 모든 스크립트는 이 스킬의 `scripts/` 폴더에 있고, 본문은 PATH 런처 `mrt-review`로 호출한다
-(런처는 `bin/mrt-review`, 공통 경로 코어는 `scripts/lib.sh`).
+(런처도 같은 `scripts/mrt-review`, 공통 경로 코어는 `scripts/lib.sh`).
 
 ### 초기화 / 폴더 보장
 

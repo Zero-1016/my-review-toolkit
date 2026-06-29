@@ -33,8 +33,8 @@ done
 
 echo "[$HOME/.local/bin]"
 mkdir -p "$HOME/.local/bin"
-chmod +x "$REPO/bin/mrt-review"
-link "$REPO/bin/mrt-review" "$HOME/.local/bin/mrt-review"
+chmod +x "$REPO/skills/review-memory/scripts/mrt-review"
+link "$REPO/skills/review-memory/scripts/mrt-review" "$HOME/.local/bin/mrt-review"
 
 case ":$PATH:" in
   *":$HOME/.local/bin:"*) ;;
