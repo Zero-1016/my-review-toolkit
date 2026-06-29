@@ -1,1 +1,5 @@
 review-skills-workspace/
+
+# 중앙 리뷰 메모리(모든 프로젝트의 누적 기록) — 로컬 자산, 커밋하지 않는다.
+.review-memory/
+CLAUDE.local.md
