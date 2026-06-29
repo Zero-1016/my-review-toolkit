@@ -26,10 +26,10 @@ def _lib(func: str, *args: str) -> str:
 def resolve_memory_dir(arg: str) -> Path:
     """인자를 slug 또는 프로젝트 경로로 받아 중앙 메모리 폴더를 돌려준다."""
     mem_root = Path(_lib("rm_root"))
-    if "/" not in arg and (mem_root / arg).is_dir():
-        return mem_root / arg              # slug 직접 지정
     if Path(arg).is_dir():
-        return Path(_lib("rm_memory_dir", arg))  # 프로젝트 경로 → slug 해석
+        return Path(_lib("rm_memory_dir", arg))  # 프로젝트 경로 ('.' 포함) → slug 해석
+    if (mem_root / arg).is_dir():
+        return mem_root / arg              # slug 직접 지정
     raise SystemExit(f"오류: '{arg}' 는 slug도 프로젝트 경로도 아닙니다.")
 
 
