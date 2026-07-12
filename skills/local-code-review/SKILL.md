@@ -19,6 +19,21 @@ mrt-review setup <프로젝트경로>
 리뷰 메모리는 대상 프로젝트가 아니라 **mrt 저장소 안**(`<mrt>/.review-memory/<프로젝트명>/`)에 모인다.
 스크립트 출력의 **마지막 줄이 이 프로젝트의 메모리 폴더 절대경로**(`<MEM>`)다 — 아래 파일들은 그 경로 기준으로 읽는다.
 
+### 모노레포면: 패키지(scope)별 메모리로 분리
+
+대상이 모노레포면(루트에 `pnpm-workspace.yaml`·`turbo.json`·`nx.json`·`lerna.json`, 또는 `package.json`의 `workspaces`, 혹은 `packages/`·`apps/` 레이아웃) 리뷰 메모리를 패키지별로 나눈다.
+
+1. **변경 파일 목록을 먼저 확인**한다: `git diff --name-only HEAD` (미커밋) 또는 `git diff --name-only <기본브랜치>...HEAD`.
+2. 변경이 **한(또는 소수) 패키지에 몰려 있으면** 그 패키지명을 scope로 잡아 다시 setup 한다:
+   ```bash
+   mrt-review setup <프로젝트경로> --scope <패키지명>   # 예: packages/ui → --scope ui
+   ```
+   - 여러 패키지에 걸치거나 루트/CI/공유 설정을 건드리면 **scope 없이 repo 계층**으로 둔다.
+   - 멀티-패키지면 각 touched 패키지에 대해 setup 하고 각각의 메모리를 로드한다.
+3. scope로 setup하면 출력에 `SHARED_MEM=<repo 공유 폴더>` 줄이 함께 나온다.
+   **공유 계층과 scope 계층을 둘 다 읽는다** — 공유(`SHARED_MEM`의 context/conventions) + scope(`<MEM>`의 context/conventions + 최근 리뷰).
+4. **기록도 계층을 지킨다**: 리뷰 로그는 touched scope의 `reviews/`에. 컨벤션 후보는 그 패키지 고유면 scope의 `conventions.md`, 여러 패키지 공통이면 공유 `conventions.md`로 나눠 (기존처럼 사용자 승인 후에만) 기록한다.
+
 그 다음 반드시 읽는다:
 - `<MEM>/context.md` — 사용자가 미리 등록한 배경/중점 사항/팀 규칙. 리뷰 우선순위에 직접 반영한다.
 - `<MEM>/conventions.md` — 반복 패턴/컨벤션
