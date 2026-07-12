@@ -7,6 +7,10 @@
           {
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/hooks/changelog-on-commit.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/hooks/doc-freshness.sh\""
           }
         ]
       }
