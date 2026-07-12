@@ -7,7 +7,7 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-SKILLS=(branch-review local-code-review pr-review review-memory)
+SKILLS=(branch-review changelog local-code-review pr-review review-memory)
 
 # 심링크 보장: 이미 올바른 링크면 건너뛰고, 깨졌거나 다른 링크면 교체.
 # 비-심링크 실파일/디렉토리가 있으면 보존하고 경고만 낸다.
