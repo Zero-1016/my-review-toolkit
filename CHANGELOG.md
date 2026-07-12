@@ -11,7 +11,7 @@
 > **Removed**(없어짐) · **Fixed**(고침) · **Security**(보안).
 
 ## [Unreleased]
-<!-- last-processed: fa4d769 -->
+<!-- last-processed: 504c98b -->
 
 ## [0.1.0] - 2026-07-12
 
