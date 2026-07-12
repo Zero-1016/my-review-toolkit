@@ -13,6 +13,8 @@
 ## [Unreleased]
 <!-- last-processed: 59ba9dc -->
 
+## [0.2.0] - 2026-07-13
+
 ### Added
 - 모노레포를 리뷰할 때, 리뷰 기록을 패키지별로 나눠 저장할 수 있게 됐습니다. 여러 패키지에 공통인 규칙은 한곳에, 특정 패키지에만 해당하는 규칙은 그 패키지 폴더에 쌓여 메모리가 뒤섞이지 않습니다.
 - 리뷰 스킬이 바뀐 파일 위치를 보고 어느 패키지인지 스스로 알아내서, 그 패키지의 과거 기록을 함께 참고합니다.
@@ -32,5 +34,6 @@
 - 흩어져 있던 리뷰 메모리 스크립트를 한 폴더로 모아 정리했습니다.
 - 리뷰에서 발견한 규칙을 자동으로 쌓지 않고, 사용자가 확인한 뒤에만 기록하도록 바꿨습니다.
 
-[Unreleased]: https://github.com/Zero-1016/my-review-toolkit/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Zero-1016/my-review-toolkit/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/Zero-1016/my-review-toolkit/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Zero-1016/my-review-toolkit/releases/tag/v0.1.0
