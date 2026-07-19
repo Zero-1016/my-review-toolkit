@@ -11,7 +11,7 @@
 > **Removed**(없어짐) · **Fixed**(고침) · **Security**(보안).
 
 ## [Unreleased]
-<!-- last-processed: e4825e6 -->
+<!-- last-processed: 1b35ce9 -->
 
 ### Added
 - PR을 쉽고 일관되게 쓰도록 도와주는 `pr-write` 스킬을 추가했습니다. 커밋을 읽어 "무엇을·왜" 바꿨는지 정리된 제목과 본문을 만들어 주고, 확인을 거쳐 PR을 올리거나 기존 PR을 다듬습니다.
