@@ -11,7 +11,12 @@
 > **Removed**(없어짐) · **Fixed**(고침) · **Security**(보안).
 
 ## [Unreleased]
-<!-- last-processed: 71ab3d0 -->
+<!-- last-processed: 1b35ce9 -->
+
+### Added
+- PR을 쉽고 일관되게 쓰도록 도와주는 `pr-write` 스킬을 추가했습니다. 커밋을 읽어 "무엇을·왜" 바꿨는지 정리된 제목과 본문을 만들어 주고, 확인을 거쳐 PR을 올리거나 기존 PR을 다듬습니다.
+- PR 본문 골격을 담은 GitHub PR 템플릿(`.github/PULL_REQUEST_TEMPLATE.md`)을 추가해, 사람이 직접 PR을 열 때도 같은 형식을 쓰게 했습니다.
+- PR 본문이 GitHub에서 문장이 어정쩡하게 끊겨 보이던 문제(문단을 중간에 줄바꿈해서 생김)를 막는 작성 규칙을 스킬과 템플릿에 넣었습니다.
 
 ## [0.2.0] - 2026-07-13
 

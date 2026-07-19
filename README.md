@@ -14,6 +14,7 @@
 | [`local-code-review`](skills/local-code-review/SKILL.md) | 미커밋 변경 (working diff) | 커밋/푸시 전에 "내 변경사항 봐줘", "커밋 전에 리뷰해줘" |
 | [`branch-review`](skills/branch-review/SKILL.md) | 브랜치 전체 (base 브랜치의 merge-base 기준, 커밋 + 미커밋) | "main 대비 뭐가 바뀌었는지 리뷰해줘", "브랜치 전체 심각도별로 봐줘" |
 | [`pr-review`](skills/pr-review/SKILL.md) | GitHub PR | PR 번호/URL로 "이 PR 리뷰해줘" — 복사해서 달 수 있는 추천 코멘트까지 생성 |
+| [`pr-write`](skills/pr-write/SKILL.md) | PR 작성 (제목 + 본문) | "PR 작성해줘/올려줘", "PR 제목·본문 다듬어줘" — 커밋을 읽어 정형 PR을 만들고 gh로 생성/수정 (작성 전용, 리뷰 아님) |
 | [`review-memory`](skills/review-memory/SKILL.md) | 리뷰 메모리 관리 | 메모리 내보내기/가져오기/조회, 리뷰 컨텍스트 사전 등록. 공용 스크립트도 여기에 |
 | [`changelog`](skills/changelog/SKILL.md) | 이 저장소의 변경 이력 | "체인지로그 갱신해줘", "버전 올려줘/릴리스" — 커밋을 쉬운 문장으로 기록 + SemVer 태그 |
 

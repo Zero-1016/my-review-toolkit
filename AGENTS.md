@@ -1,15 +1,16 @@
 # AGENTS.md — mrt 리뷰 스킬 저장소
 
-이 저장소(mrt)는 코드 리뷰 스킬 5종의 **개발 저장소**이자, 모든 프로젝트의
-리뷰 메모리가 모이는 **중앙 저장소**다. 스킬은 특정 에이전트 전용이 아니라
+이 저장소(mrt)는 스킬 6종(코드 리뷰 5종 + PR 작성 `pr-write` 1종)의 **개발 저장소**이자,
+모든 프로젝트의 리뷰 메모리가 모이는 **중앙 저장소**다. 스킬은 특정 에이전트 전용이 아니라
 Claude Code · Codex · Gemini CLI · Copilot CLI에서 공용으로 쓰도록 만들어졌다
-(`name`/`description` frontmatter는 5종 공통, 본문은 `bash`/`git`/`gh` 기반).
+(`name`/`description` frontmatter는 공통, 본문은 `bash`/`git`/`gh` 기반).
 
 이 파일이 공용 지시파일 정본이며, `CLAUDE.md`·`GEMINI.md`는 여기로의 심링크다.
 
 ## 구조
 
-- `skills/` — 정본 스킬 (`branch-review`, `changelog`, `local-code-review`, `pr-review`, `review-memory`).
+- `skills/` — 정본 스킬 (`branch-review`, `changelog`, `local-code-review`, `pr-review`, `pr-write`, `review-memory`).
+- `.github/PULL_REQUEST_TEMPLATE.md` — PR 본문 골격(무엇/왜/변경 내역/검증). `pr-write` 스킬이 채운다.
 - `skills/review-memory/scripts/mrt-review` — 스킬 본문이 호출하는 PATH 런처. 메모리 스크립트의 단일 진입점이며, 위임 대상 스크립트(`lib.sh`·`setup_memory.sh`·`manager.sh`)와 같은 폴더에 산다.
 - `install.sh` — 정본을 각 에이전트 경로로 링크 + 런처 설치 (멱등).
 - `CHANGELOG.md` — 이 저장소의 변경 이력(Keep a Changelog + SemVer). `changelog` 스킬이 관리한다.
